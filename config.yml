@@ -1,0 +1,23 @@
+snes:
+  emulator: /Applications/RetroArch.app/Contents/MacOS/RetroArch
+  params:
+    - -L
+    - /Applications/RetroArch.app/Contents/Resources/cores/snes9x_libretro.dylib
+
+genesis:
+  emulator: localhost
+  params:
+    -
+
+
+# MAcOS retroarch:
+#   RetroArch.app/Contents/MacOS/RetroArch -L RetroArch.app/Contents/Resources/cores/snes9x_libretro.dylib
+#                                          ../../test\ roms/Dragon\ Ball\ Z\ -\ Hyper\ Dimension\ \(Japan\).sfc
+# MacOS bsnes:
+#   bsnes-nightly/bsnes.app/Contents/MacOS/bsnes ../../test\ roms/Dragon\ Ball\ Z\ -\ Hyper\ Dimension\ \(Japan\).sfc
+#
+# Linux retroarch
+#   retroarch -L /usr/lib/x86_64-linux-gnu/libretro/snes9x_libretro.so /media/pi/EMTEC8/Dragon\ Ball\ Z\ -\ Hyper\ Dimension\ \(J\)\ \[\!\].smc
+#
+# Linux runcommand:
+#
