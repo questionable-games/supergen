@@ -2,7 +2,7 @@
 
 The glue between your old cartridges and modern emulators.
 
-# Quick Start
+# Quick Start
 
 * Clone the project
 * Configure `config.yml` according to your system.
@@ -11,9 +11,9 @@ The glue between your old cartridges and modern emulators.
   for any of the supported systems.
 * Play the game.
 
-# Configuration
+# Configuration
 
-## Emulators
+## Emulators
 
 Use `config.yml` file to configure the emulators you would like
 to use for each supported platform.
