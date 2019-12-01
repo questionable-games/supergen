@@ -22,7 +22,7 @@ to use for each supported platform.
 
 Still in development.
 
-# Supported Systems
+# Supported Systems
 * SNES
 
 # Requirements
