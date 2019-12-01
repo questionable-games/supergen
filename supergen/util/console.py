@@ -20,6 +20,7 @@
 #     Alberto Pérez García-Plaza <alpgarcia@gmail.com>
 #
 import os
+import shutil
 
 from collections import deque
 from datetime import datetime
@@ -33,10 +34,10 @@ class Console:
     __GEN_COLOR = colorama.Style.BRIGHT + colorama.Fore.BLUE
 
     __lines = deque(maxlen=5)
-    __max_len = 0
 
     def __init__(self):
         colorama.init(autoreset=True)
+        self.term_columns = shutil.get_terminal_size().columns
 
     def __move_cursor(self, x, y):
         print ("\x1b[{};{}H".format(y, x))
@@ -63,26 +64,38 @@ class Console:
         self.__move_cursor(1, 13)
         print('-----')
 
+    def clean_line(self):
+        print(' ' * self.term_columns, end='\r')
+
     def println(self, message):
-        message = str(message)
+        self.__lines.append(str(message))
 
-        self.__lines.append(message)
-        if len(message) + 33 > self.__max_len:
-            self.__max_len = len(message) + 33
-
+        # Initial line number for printing
         y = 8
         for line in self.__lines:
+
+            # Look for latest line
             if len(self.__lines) == (y - 7):
-                prompt = '-> ' + colorama.Style.BRIGHT + colorama.Fore.GREEN + '[SuperGen]'
+                prompt_style = colorama.Style.BRIGHT + colorama.Fore.GREEN
+                prompt = '-> ' + prompt_style
             else:
-                prompt = colorama.Style.RESET_ALL + '|  [SuperGen]'
+                prompt_style = colorama.Style.RESET_ALL
+                prompt = prompt_style + '|  '
+
+            prompt += '[' + datetime.now().strftime('%H:%M:%S') + '] '
+
+            line_style = colorama.Style.RESET_ALL
+            formatted_line = prompt + line_style + line
+
+            style_len = len(prompt_style) + len(line_style)
+            line_len = len(formatted_line) - style_len
+            if line_len > self.term_columns:
+                # Take into account ANSI codes, not printed but still in the string.
+                # Thus, the total string len we can use is number of columns + ANSI codes len.
+                formatted_line = formatted_line[:self.term_columns + style_len - 3] + '...'
 
             self.__move_cursor(1, y)
-            blank_line = ' '
-            for i in range(self.__max_len):
-                blank_line += ' '
-            print(blank_line, end='\r')
-            print(prompt +
-                  colorama.Style.RESET_ALL + ' [' + datetime.now().strftime('%d-%m-%y %H:%M:%S') + '] ' +
-                  line)
+            self.clean_line()
+            print(formatted_line)
+
             y += 1
