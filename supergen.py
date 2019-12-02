@@ -20,88 +20,37 @@
 # Authors:
 #     Alberto Pérez García-Plaza <alpgarcia@gmail.com>
 #
-import glob
 import platform
-import subprocess
 import sys
 
-import yaml
 
 from supergen.util.console import Console
 
 
-SNES_EXTENSIONS = ['smc', 'sfc']
-
-DISKUTIL = ['/usr/sbin/diskutil', 'activity']
-
-# TODO make this a singleton usable from any project file
-console = Console()
-
-
-def load_config(config="config.yml"):
-    with open(config, 'r') as ymlfile:
-        cfg = yaml.load(ymlfile)
-
-    emus = {'snes': cfg.get('snes'),
-            'genesis': cfg.get('genesis')}
-
-    return emus
-
-
-def roms_search(mountpoint, emus):
-    # Look for ROMs in the partition
-    snes_roms = []
-    for ext in SNES_EXTENSIONS:
-        snes_pattern = mountpoint + '/**/*.' + ext
-        snes_roms.extend([fname for fname in glob.glob(snes_pattern, recursive=True)])
-
-    if len(snes_roms) > 0:
-        launch_snes(emus, snes_roms)
-
-    else:
-        console.println('No roms found in {0}'.format(mountpoint))
-
-
-def launch_snes(emus, snes_roms):
-    if emus.get('snes'):
-        console.println('Launching {0}'.format(snes_roms[0]))
-        console.println('Exiting emulator with status {0}'.format(launch_game(emus['snes']['emulator'],
-                                                                              emus['snes']['params'],
-                                                                              snes_roms[0])))
-    else:
-        console.println('No emulator configured for SNES.')
-
-
-def launch_game(emulator, params, rom):
-    return subprocess.call([emulator, *params, rom], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-
 def main():
 
-    emus = load_config()
+    console = Console()
 
     console.cls()
     console.print_header()
     console.print_frame()
 
     platform_name = platform.system()
-    console.println('Running on ' + platform_name)
+    console.println('Running on {0}'.format(platform_name))
 
-    while True:
-        if platform_name == 'Darwin':
-            from supergen.usb import usb_osx
-            mountpoint = usb_osx.listen()
+    if platform_name == 'Darwin':
+        from supergen.base.osx_core import OsxCore
+        core = OsxCore(console)
 
-        elif platform_name == 'Linux':
-            from supergen.usb import usb_linux
-            mountpoint = usb_linux.listen(console)
+    elif platform_name == 'Linux':
+        from supergen.base.linux_core import LinuxCore
+        core = LinuxCore(console)
 
-        else:
-            console.println('Unsupported platform...exiting')
-            sys.exit(0)
+    else:
+        console.println('Unsupported platform...exiting')
+        sys.exit(0)
 
-        console.println('Searching for ROMs in {0}'.format(mountpoint))
-        roms_search(mountpoint, emus)
+    core.start()
 
 
 if __name__ == '__main__':
