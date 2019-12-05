@@ -1,0 +1,7 @@
+snes:
+  emulator: snes_emu
+  params:
+
+genesis:
+  emulator: md_emu
+  params:
