@@ -22,7 +22,7 @@ import subprocess
 import sys
 import unittest
 
-from mock import patch, MagicMock
+from mock import MagicMock
 
 # Make sure we use our code and not any other could we have installed
 sys.path.insert(0, '..')
@@ -33,92 +33,78 @@ from supergen.base.osx_core import OsxCore
 
 class TestCore(unittest.TestCase):
 
+    def setUp(self):
+        # Mock the console object
+        console = MagicMock()
+
+        # Create the real objects to test based on the mocked console and a dummy config file
+        self.__osx_core = OsxCore(console=console, config='dummy_config.yml')
+
+        # Same for `linux_core`
+        self.__linux_core = LinuxCore(console=console, config='dummy_config.yml')
+
     def test_launch_game_with_no_params(self):
         """Test launch game calls `subprocess.call` with the no emulator params"""
 
-        # Mock console instance
-        with patch('supergen.util.console.Console') as mock:
-            console = mock.return_value
+        # Mock `subprocess.call` method
+        subprocess.call = MagicMock(return_value=1)
 
-            # Create the real objects to test based on the mocked console and a dummy config file
-            osx_core = OsxCore(console=console, config='dummy_config.yml')
+        # Test case: params are `None`
+        result = self.__osx_core.launch_game('emu', None, 'rom')
+        subprocess.call.assert_called_once_with(['emu', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        # Check the method returns the return value coming from the mocked method
+        assert result == 1
 
-            # Mock `subprocess.call` method, we will
-            subprocess.call = MagicMock(return_value=1)
-
-            # Test case: params are `None`
-            result = osx_core.launch_game('emu', None, 'rom')
-            subprocess.call.assert_called_once_with(['emu', 'rom'],
-                                                    stdout=subprocess.DEVNULL,
-                                                    stderr=subprocess.DEVNULL)
-            # Check the method returns the return value coming from the mocked method
-            assert result == 1
-
-            # Same test for `linux_core` (should be the same method from `Core` class)
-            linux_core = LinuxCore(console=console, config='dummy_config.yml')
-            subprocess.call = MagicMock(return_value=0)
-            result = linux_core.launch_game('emu', None, 'rom')
-            subprocess.call.assert_called_once_with(['emu', 'rom'],
-                                                    stdout=subprocess.DEVNULL,
-                                                    stderr=subprocess.DEVNULL)
-            assert result == 0
+        # Same for Linux core, in fact under the hood it should be the same method from the parent `Core` class
+        subprocess.call = MagicMock(return_value=0)
+        result = self.__linux_core.launch_game('emu', None, 'rom')
+        subprocess.call.assert_called_once_with(['emu', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        assert result == 0
 
     def test_launch_game_with_empty_params_list(self):
         """Test launch game calls `subprocess.call` with the an empty list as emulator params"""
 
-        # Mock console instance
-        with patch('supergen.util.console.Console') as mock:
-            console = mock.return_value
+        # Mock `subprocess.call` method
+        subprocess.call = MagicMock(return_value=1)
 
-            # Create the real objects to test based on the mocked console and a dummy config file
-            osx_core = OsxCore(console=console, config='dummy_config.yml')
+        # Test case: params are `None`
+        result = self.__osx_core.launch_game('emu', [], 'rom')
+        subprocess.call.assert_called_once_with(['emu', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        # Check the method returns the return value coming from the mocked method
+        assert result == 1
 
-            # Mock `subprocess.call` method, we will
-            subprocess.call = MagicMock(return_value=1)
-
-            # Test case: params are `None`
-            result = osx_core.launch_game('emu', [], 'rom')
-            subprocess.call.assert_called_once_with(['emu', 'rom'],
-                                                    stdout=subprocess.DEVNULL,
-                                                    stderr=subprocess.DEVNULL)
-            # Check the method returns the return value coming from the mocked method
-            assert result == 1
-
-            # Same test for `linux_core` (should be the same method from `Core` class)
-            linux_core = LinuxCore(console=console, config='dummy_config.yml')
-            subprocess.call = MagicMock(return_value=2)
-            result = linux_core.launch_game('emu', [], 'rom')
-            subprocess.call.assert_called_once_with(['emu', 'rom'],
-                                                    stdout=subprocess.DEVNULL,
-                                                    stderr=subprocess.DEVNULL)
-            assert result == 2
+        # Same for Linux core, in fact under the hood it should be the same method from the parent `Core` class
+        subprocess.call = MagicMock(return_value=2)
+        result = self.__linux_core.launch_game('emu', [], 'rom')
+        subprocess.call.assert_called_once_with(['emu', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        assert result == 2
 
     def test_launch_game_with_params_list(self):
         """Test launch game calls `subprocess.call` with the a list as emulator params"""
 
-        # Mock console instance
-        with patch('supergen.util.console.Console') as mock:
-            console = mock.return_value
+        # Mock `subprocess.call` method
+        subprocess.call = MagicMock(return_value=5)
 
-            # Create the real objects to test based on the mocked console and a dummy config file
-            osx_core = OsxCore(console=console, config='dummy_config.yml')
+        # Test case: params are `None`
+        result = self.__osx_core.launch_game('emu', ['-p', 'param'], 'rom')
+        subprocess.call.assert_called_once_with(['emu', '-p', 'param', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        # Check the method returns the return value coming from the mocked method
+        assert result == 5
 
-            # Mock `subprocess.call` method, we will
-            subprocess.call = MagicMock(return_value=5)
-
-            # Test case: params are `None`
-            result = osx_core.launch_game('emu', ['-p', 'param'], 'rom')
-            subprocess.call.assert_called_once_with(['emu', '-p', 'param', 'rom'],
-                                                    stdout=subprocess.DEVNULL,
-                                                    stderr=subprocess.DEVNULL)
-            # Check the method returns the return value coming from the mocked method
-            assert result == 5
-
-            # Same test for `linux_core` (should be the same method from `Core` class)
-            linux_core = LinuxCore(console=console, config='dummy_config.yml')
-            subprocess.call = MagicMock(return_value=3)
-            result = linux_core.launch_game('emu', ['-p', 'param'], 'rom')
-            subprocess.call.assert_called_once_with(['emu', '-p', 'param', 'rom'],
-                                                    stdout=subprocess.DEVNULL,
-                                                    stderr=subprocess.DEVNULL)
-            assert result == 3
+        # Same for Linux core, in fact under the hood it should be the same method from the parent `Core` class
+        subprocess.call = MagicMock(return_value=3)
+        result = self.__linux_core.launch_game('emu', ['-p', 'param'], 'rom')
+        subprocess.call.assert_called_once_with(['emu', '-p', 'param', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        assert result == 3
