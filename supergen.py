@@ -45,6 +45,10 @@ def main():
     elif platform_name == 'Linux':
         from supergen.base.linux_core import LinuxCore
         core = LinuxCore(console)
+     
+    elif platform_name == 'Windows':
+        from supergen.base.windows_core import WindowsCore
+        core = WindowsCore(console)        
 
     else:
         console.println('Unsupported platform...exiting')

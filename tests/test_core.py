@@ -29,6 +29,7 @@ sys.path.insert(0, '..')
 
 from supergen.base.linux_core import LinuxCore
 from supergen.base.osx_core import OsxCore
+from supergen.base.windows_core import WindowsCore
 
 
 class TestCore(unittest.TestCase):
@@ -42,6 +43,9 @@ class TestCore(unittest.TestCase):
 
         # Same for `linux_core`
         self.__linux_core = LinuxCore(console=console, config='dummy_config.yml')
+        
+        # Also same for `windows_core`
+        self.__windows_core = WindowsCore(console=console, config='dummy_config.yml')
 
     def test_launch_game_with_no_params(self):
         """Test launch game calls `subprocess.call` with the no emulator params"""
@@ -60,6 +64,13 @@ class TestCore(unittest.TestCase):
         # Same for Linux core, in fact under the hood it should be the same method from the parent `Core` class
         subprocess.call = MagicMock(return_value=0)
         result = self.__linux_core.launch_game('emu', None, 'rom')
+        subprocess.call.assert_called_once_with(['emu', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+                                                
+        # Same for WindowsCore
+        subprocess.call = MagicMock(return_value=0)
+        result = self.__windows_core.launch_game('emu', None, 'rom')
         subprocess.call.assert_called_once_with(['emu', 'rom'],
                                                 stdout=subprocess.DEVNULL,
                                                 stderr=subprocess.DEVNULL)
@@ -85,6 +96,14 @@ class TestCore(unittest.TestCase):
         subprocess.call.assert_called_once_with(['emu', 'rom'],
                                                 stdout=subprocess.DEVNULL,
                                                 stderr=subprocess.DEVNULL)
+        
+        # Same for Windows
+        subprocess.call = MagicMock(return_value=2)
+        result = self.__windows_core.launch_game('emu', [], 'rom')
+        subprocess.call.assert_called_once_with(['emu', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+        
         assert result == 2
 
     def test_launch_game_with_params_list(self):
@@ -107,4 +126,12 @@ class TestCore(unittest.TestCase):
         subprocess.call.assert_called_once_with(['emu', '-p', 'param', 'rom'],
                                                 stdout=subprocess.DEVNULL,
                                                 stderr=subprocess.DEVNULL)
+        
+        # Same for Windows
+        subprocess.call = MagicMock(return_value=3)
+        result = self.__windows_core.launch_game('emu', ['-p', 'param'], 'rom')
+        subprocess.call.assert_called_once_with(['emu', '-p', 'param', 'rom'],
+                                                stdout=subprocess.DEVNULL,
+                                                stderr=subprocess.DEVNULL)
+                                                
         assert result == 3
