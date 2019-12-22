@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2019 Alberto Pérez García-Plaza
+# Copyright (C) 2019 Marcos Nieto Doncel
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 # Authors:
-#     Alberto Pérez García-Plaza <alpgarcia@gmail.com>
+#     Marcos Nieto Doncel
 #
-import win32file
+import platform
+import time
+if platform.system() == 'Windows':
+    import win32file
 
-import time, string
 
 from supergen.base.core import Core
 
