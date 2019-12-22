@@ -20,9 +20,11 @@
 #     Alberto Pérez García-Plaza <alpgarcia@gmail.com>
 #
 import os
+import platform
 
 from time import sleep
-from subprocess import Popen, PIPE
+if platform.system() == 'Darwin':
+    from subprocess import Popen, PIPE
 
 from supergen.base.core import Core
 

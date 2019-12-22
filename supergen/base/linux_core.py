@@ -19,8 +19,10 @@
 # Authors:
 #     Alberto Pérez García-Plaza <alpgarcia@gmail.com>
 #
-import pyudev
-import psutil
+import platform
+if platform.system() == 'Linux':
+    import pyudev
+    import psutil
 
 from time import sleep
 
