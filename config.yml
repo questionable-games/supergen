@@ -20,4 +20,4 @@ genesis:
 #   retroarch -L /usr/lib/x86_64-linux-gnu/libretro/snes9x_libretro.so /media/pi/EMTEC8/Dragon\ Ball\ Z\ -\ Hyper\ Dimension\ \(J\)\ \[\!\].smc
 #
 # Linux runcommand:
-#
+#   /opt/retropie/supplementary/runcommand/runcommand.sh 0 _SYS_ snes ../RetroPie/roms/snes/Axelay.zip
